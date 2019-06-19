@@ -45,10 +45,26 @@ import org.xml.sax.SAXParseException;
  */
 public class XPathParser {
 
+  /**
+   * xml DOCUOMENT 对象
+   * */
   private final Document document;
+  /**
+   * 是否校验
+   */
   private boolean validation;
+  /**
+   * XML 实体解析器
+   */
   private EntityResolver entityResolver;
+  /**
+   * 变量properties 对象
+   */
   private Properties variables;
+  /**
+   * java XPath 对象
+   *
+   */
   private XPath xpath;
 
   public XPathParser(String xml) {
@@ -226,20 +242,26 @@ public class XPathParser {
     }
   }
 
+  /**
+   * 通过传入的xml inputSource对象来创建一个 Document 对象
+   * @param inputSource
+   * @return
+   */
   private Document createDocument(InputSource inputSource) {
-    // important: this must only be called AFTER common constructor
+    // important: this must only be called AFTER common
+    // constructor
     try {
+      // 1> 创建 DocumentBuilderFactory 对象
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       factory.setValidating(validation);
-
       factory.setNamespaceAware(false);
       factory.setIgnoringComments(true);
       factory.setIgnoringElementContentWhitespace(false);
       factory.setCoalescing(false);
       factory.setExpandEntityReferences(true);
-
+      // 2> 创建 DocumentBuilder 对象
       DocumentBuilder builder = factory.newDocumentBuilder();
-      builder.setEntityResolver(entityResolver);
+      builder.setEntityResolver(entityResolver);//设置实体解析器
       builder.setErrorHandler(new ErrorHandler() {
         @Override
         public void error(SAXParseException exception) throws SAXException {
@@ -255,6 +277,7 @@ public class XPathParser {
         public void warning(SAXParseException exception) throws SAXException {
         }
       });
+      //解析 xml 文件
       return builder.parse(inputSource);
     } catch (Exception e) {
       throw new BuilderException("Error creating document instance.  Cause: " + e, e);
